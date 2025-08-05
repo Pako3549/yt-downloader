@@ -110,7 +110,11 @@ def download_release(item_url, index, output_dir, cookie_option, browser):
         entries = data.get("entries", []) if data else []
         for i, entry in enumerate(entries, 1):
             title = entry.get("title", "Unknown Track")
-            url = entry.get("url") or entry.get("webpage_url", "")
+            url = entry.get("webpage_url", "")
+            if not url:
+                yt_id = entry.get("id") or entry.get("url", "")
+                if yt_id:
+                    url = f"https://www.youtube.com/watch?v={yt_id}"
             f.write(f"{i}. {title}\n{url}\n\n")
 
     args = [
@@ -170,7 +174,7 @@ def download_single_playlist(url, cookie_option, browser):
         f.write(f"{playlist_title}\n{url}\n\n")
         for i, entry in enumerate(entries, 1):
             title = entry.get("title", "Unknown Track")
-            track_url = entry.get("url") or entry.get("webpage_url", "")
+            track_url = entry.get("webpage_url", "")
             f.write(f"{i}. {title}\n{track_url}\n\n")
     def download_track(entry):
         track_url = entry.get("url") or entry.get("webpage_url", url)
@@ -219,6 +223,8 @@ def menu():
         browser = choose_browser()
     while True:
         print("\n==== YouTube Downloader ====")
+        if browser == "none":
+            print("WARNING: To avoid YouTube rate limiting or issues with restricted content, it is STRONGLY RECOMMENDED to set browser cookies.")
         print(f"Current browser for cookies: {browser}")
         print("1. Download all singles/albums of an artist")
         print("2. Download a single song")
