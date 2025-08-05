@@ -51,9 +51,9 @@ pip install -r yt-downloader/requirements.txt
    - `0. Exit`
 
 3. **Downloads:**
-   - Albums and singles are saved in `YouTube_Releases/<artist>/`.
-   - Single songs are saved in `YouTube_Songs/`.
-   - Playlists are saved in `YouTube_Playlists/<playlist_name>/` (all tracks in one folder).
+   - Albums and singles are saved in `output/releases/<artist>/`.
+   - Single songs are saved in `output/songs/`.
+   - Playlists are saved in `output/playlists/<playlist_name>/` (all tracks in one folder).
    - Each album/playlist folder contains:
      - `tracks.txt` (tracklist and links)
      - Downloaded MP3 files

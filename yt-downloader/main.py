@@ -162,7 +162,7 @@ def download_single_playlist(url, cookie_option, browser):
     print(f"📃 Downloading playlist: {url}")
     info = run_yt_dlp_json(url, browser, cookies=cookie_option)
     playlist_title = info.get("title", "Unknown_Playlist") if info else "Unknown_Playlist"
-    playlist_folder = os.path.join("YouTube_Playlists", sanitize_folder(playlist_title))
+    playlist_folder = os.path.join("output", "playlists", sanitize_folder(playlist_title))
     os.makedirs(playlist_folder, exist_ok=True)
     tracks_txt = os.path.join(playlist_folder, "tracks.txt")
     entries = info.get("entries", []) if info else []
@@ -232,7 +232,7 @@ def menu():
             if not channel_name:
                 print("❌ Invalid URL. Unable to determine channel/artist.")
                 continue
-            output_dir = os.path.join("YouTube_Releases", channel_name)
+            output_dir = os.path.join("output", "releases", channel_name)
             os.makedirs(output_dir, exist_ok=True)
             print("🔍 Searching for available albums and singles...")
             urls = get_release_urls(url, output_dir, browser)
@@ -249,7 +249,7 @@ def menu():
             print(f"✅ Download completed. Files saved in: {output_dir}")
         elif choice == "2":
             url = input("🔗 Enter the YouTube song URL: ").strip()
-            output_dir = os.path.join("YouTube_Songs")
+            output_dir = os.path.join("output", "songs")
             cookie_option = True
             download_single_song(url, output_dir, cookie_option, browser)
             print(f"✅ Song downloaded to: {output_dir}")
@@ -257,7 +257,7 @@ def menu():
             url = input("🔗 Enter the YouTube playlist URL: ").strip()
             cookie_option = True
             download_single_playlist(url, cookie_option, browser)
-            print(f"✅ Playlist downloaded to: YouTube_Playlists/<playlist_name>")
+            print(f"✅ Playlist downloaded to: output/playlists/<playlist_name>")
         elif choice == "4":
             browser = choose_browser()
             print(f"✅ Browser for cookies set to {browser}.")
