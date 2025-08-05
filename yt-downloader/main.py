@@ -135,6 +135,64 @@ def download_release(item_url, index, output_dir, cookie_option, browser):
         args.insert(2, browser)
     subprocess.run(args)
 
+def download_single_song(url, output_dir, cookie_option, browser):
+    print(f"🎵 Downloading single song: {url}")
+    args = [
+        "yt-dlp",
+        "--ignore-errors",
+        "--extract-audio",
+        "--audio-format", "mp3",
+        "--audio-quality", "0",
+        "--embed-metadata",
+        "--embed-thumbnail",
+        "--concurrent-fragments", "8",
+        "--limit-rate", "2M",
+        "--downloader", "aria2c",
+        "--downloader-args", "aria2c:-x16 -s16 -k1M",
+        "--output", os.path.join(output_dir, "%(title)s.%(ext)s"),
+        url
+    ]
+    if cookie_option and browser != "none":
+        args.insert(1, "--cookies-from-browser")
+        args.insert(2, browser)
+    os.makedirs(output_dir, exist_ok=True)
+    subprocess.run(args)
+
+def download_single_playlist(url, output_dir, cookie_option, browser):
+    print(f"📃 Downloading playlist: {url}")
+    info = run_yt_dlp_json(url, browser, cookies=cookie_option)
+    playlist_title = info.get("title", "Unknown_Playlist") if info else "Unknown_Playlist"
+    playlist_folder = os.path.join("YouTube_Playlists", sanitize_folder(playlist_title))
+    os.makedirs(playlist_folder, exist_ok=True)
+    tracks_txt = os.path.join(playlist_folder, "tracks.txt")
+    entries = info.get("entries", []) if info else []
+    with open(tracks_txt, "w") as f:
+        f.write(f"{playlist_title}\n{url}\n\n")
+        for i, entry in enumerate(entries, 1):
+            title = entry.get("title", "Unknown Track")
+            track_url = entry.get("url") or entry.get("webpage_url", "")
+            f.write(f"{i}. {title}\n{track_url}\n\n")
+    args = [
+        "yt-dlp",
+        "--yes-playlist",
+        "--ignore-errors",
+        "--extract-audio",
+        "--audio-format", "mp3",
+        "--audio-quality", "0",
+        "--embed-metadata",
+        "--embed-thumbnail",
+        "--concurrent-fragments", "8",
+        "--limit-rate", "2M",
+        "--downloader", "aria2c",
+        "--downloader-args", "aria2c:-x16 -s16 -k1M",
+        "--output", os.path.join(playlist_folder, "%(title)s.%(ext)s"),
+        url
+    ]
+    if cookie_option and browser != "none":
+        args.insert(1, "--cookies-from-browser")
+        args.insert(2, browser)
+    subprocess.run(args)
+
 def choose_browser():
     supported_browsers = ["firefox", "chrome", "edge", "opera", "none"]
     while True:
@@ -154,7 +212,9 @@ def menu():
         print("\n==== YouTube Downloader ====")
         print(f"Current browser for cookies: {browser}")
         print("1. Download all singles/albums of an artist")
-        print("2. Set browser for cookies")
+        print("2. Download a single song")
+        print("3. Download a single playlist")
+        print("4. Set browser for cookies")
         print("0. Exit")
         choice = input("Select an option: ").strip()
         if choice == "1":
@@ -179,6 +239,17 @@ def menu():
                     executor.submit(download_release, item_url, idx, output_dir, cookie_option, browser)
             print(f"✅ Download completed. Files saved in: {output_dir}")
         elif choice == "2":
+            url = input("🔗 Enter the YouTube song URL: ").strip()
+            output_dir = os.path.join("YouTube_Songs")
+            cookie_option = True
+            download_single_song(url, output_dir, cookie_option, browser)
+            print(f"✅ Song downloaded to: {output_dir}")
+        elif choice == "3":
+            url = input("🔗 Enter the YouTube playlist URL: ").strip()
+            cookie_option = True
+            download_single_playlist(url, None, cookie_option, browser)
+            print(f"✅ Playlist downloaded to: YouTube_Playlists/<playlist_name>")
+        elif choice == "4":
             browser = choose_browser()
             print(f"✅ Browser for cookies set to {browser}.")
         elif choice == "0":
