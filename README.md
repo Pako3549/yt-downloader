@@ -30,8 +30,8 @@ A Python script to download all singles and albums from a YouTube artist/channel
 - Python 3.7+
 - [yt-dlp](https://github.com/yt-dlp/yt-dlp)
 - [aria2c](https://aria2.github.io/)
-- [Firefox browser](https://www.mozilla.org/firefox/) (required for web scraping)
-- [Selenium](https://selenium-python.readthedocs.io/) with Firefox WebDriver (for web scraping)
+- [Firefox browser](https://www.mozilla.org/firefox/) (optional, required for web scraping when downloading from topic channels)
+- [Selenium](https://selenium-python.readthedocs.io/) with Firefox WebDriver (for web scraping playlists from topic channels)
 - A supported browser (optional, for cookies): Firefox, Chrome, Edge, Opera
 
 Install dependencies on Linux:

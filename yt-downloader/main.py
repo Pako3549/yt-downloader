@@ -17,7 +17,6 @@ DEFAULT_BROWSER = "none"
 
 def get_channel_name(url, browser, scraped_name=None):
     if scraped_name:
-        print(f"✅ Using channel name from web scraping: {scraped_name}")
         return scraped_name
     
     try:
@@ -85,7 +84,7 @@ def get_release_urls(url, output_dir, browser):
     else:
         print("❌ /releases page not available, trying web scraping...")
         try:
-            scrape_result = scrape_theme_channel_links(base_url, browser)
+            scrape_result = scrape_topic_channel_links(base_url, browser)
             if isinstance(scrape_result, dict):
                 entries = scrape_result.get("links", [])
                 scraped_channel_name = scrape_result.get("channel_name")
@@ -119,7 +118,7 @@ def get_release_urls(url, output_dir, browser):
         return {"urls": result, "channel_name": scraped_channel_name}
     return result
 
-def scrape_theme_channel_links(channel_url, browser_name):
+def scrape_topic_channel_links(channel_url, browser_name):
     try:
         options = Options()
         options.add_argument("--headless")
@@ -172,7 +171,7 @@ def scrape_theme_channel_links(channel_url, browser_name):
         
         try:
             show_button = WebDriverWait(driver, 10).until(
-                EC.element_to_be_clickable((By.XPATH, "//button[@aria-label='View all']"))
+                EC.element_to_be_clickable((By.XPATH, "//html/body/ytd-app/div[1]/ytd-page-manager/ytd-browse/ytd-two-column-browse-results-renderer/div[1]/ytd-section-list-renderer/div[2]/ytd-item-section-renderer/div[3]/ytd-shelf-renderer/div[1]/div[1]/div/div[3]/ytd-menu-renderer/div[1]/ytd-button-renderer/yt-button-shape/button"))
             )
             driver.execute_script("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center'});", show_button)
             time.sleep(1)
@@ -444,6 +443,7 @@ def menu():
         print("\n==== YouTube Downloader ====")
         if browser == "none":
             print("WARNING: To avoid YouTube rate limiting or issues with restricted content, it is STRONGLY RECOMMENDED to set browser cookies.")
+            print("WARNING: Firefox browser is also required for downloading songs from artists with topic channels (web scraping fallback).")
         print(f"Current browser for cookies: {browser}")
         print("1. Download all singles/albums of an artist")
         print("2. Download a single song")
