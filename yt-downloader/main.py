@@ -3,7 +3,6 @@ import re
 import sys
 import subprocess
 import json
-import glob
 from concurrent.futures import ThreadPoolExecutor
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
