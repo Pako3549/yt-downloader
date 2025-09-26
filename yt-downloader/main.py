@@ -59,7 +59,7 @@ def save_browser(browser):
 
 def run_yt_dlp_json(url, browser, cookies=True):
     args = [
-        "yt-dlp", "--flat-playlist", "-J", url
+        "yt-dlp", "--flat-playlist", "-J", "--extractor-args", "youtube:player-client=default,-tv_simply", url
     ]
     if cookies and browser != "none":
         args.insert(2, "--cookies-from-browser")
@@ -349,6 +349,7 @@ def download_release(item_url, index, output_dir, cookie_option, browser):
         "--downloader", "aria2c",
         "--download-archive", tracks_txt,
         "--downloader-args", "aria2c:-x16 -s16 -k1M",
+        "--extractor-args", "youtube:player-client=default,-tv_simply",
         "--output", os.path.join(target_folder, "%(title)s.%(ext)s"),
         item_url
     ]
@@ -371,6 +372,7 @@ def download_single_song(url, output_dir, cookie_option, browser):
         "--limit-rate", "2M",
         "--downloader", "aria2c",
         "--downloader-args", "aria2c:-x16 -s16 -k1M",
+        "--extractor-args", "youtube:player-client=default,-tv_simply",
         "--output", os.path.join(output_dir, "%(title)s.%(ext)s"),
         url
     ]
@@ -408,6 +410,7 @@ def download_single_playlist(url, cookie_option, browser):
             "--limit-rate", "2M",
             "--downloader", "aria2c",
             "--downloader-args", "aria2c:-x16 -s16 -k1M",
+            "--extractor-args", "youtube:player-client=default,-tv_simply",
             "--output", os.path.join(playlist_folder, "%(title)s.%(ext)s"),
             track_url
         ]
